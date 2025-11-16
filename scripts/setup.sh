@@ -8,7 +8,14 @@ cd "$(dirname "$0")"
 BASE_DIR="$(pwd)/.."
 
 echo ">>> Step 1: Install Docker"
-bash "$BASE_DIR/scripts/install_docker.sh"
+sudo apt update
+sudo apt install -y ca-certificates curl gnupg lsb-release
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt update
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+sudo usermod -aG docker $USER
+echo ">>> Docker installed. Logout & login again recommended."
 
 echo ""
 echo ">>> Step 2: Load env"
@@ -26,6 +33,13 @@ echo ""
 echo ">>> Waiting..."
 sleep 6
 docker compose ps
+
+echo ""
+echo ">>> Step 4: Bootstrap Kong"
+docker compose stop kong
+docker compose run --rm kong kong migrations bootstrap
+docker compose up -d kong
+echo ">>> Kong bootstrapped!"
 
 echo ""
 echo "=========================="
