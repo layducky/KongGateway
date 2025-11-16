@@ -46,9 +46,8 @@ echo ""
 echo ">>> Waiting for containers..."
 sleep 6
 docker compose ps
-
 # --------------------------
-# Step 4: Bootstrap Kong
+# Step 4: Bootstrap Kong and Wait
 # --------------------------
 echo ""
 echo ">>> Step 4: Bootstrap Kong"
@@ -57,12 +56,29 @@ docker compose run --rm kong kong migrations bootstrap
 docker compose up -d kong
 echo ">>> Kong bootstrapped!"
 
+# --- ADDED: Wait for Kong Admin API to be available ---
+MAX_RETRIES=10
+RETRY_COUNT=0
+echo ">>> Waiting for Kong Admin (8001) to be ready..."
+until curl -s -o /dev/null -w "%{http_code}" http://localhost:8001/status | grep 200 > /dev/null || [ $RETRY_COUNT -eq $MAX_RETRIES ]; do
+  sleep 3
+  RETRY_COUNT=$((RETRY_COUNT + 1))
+done
+
+if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
+  echo "!!! Error: Kong Admin API failed to start after $MAX_RETRIES attempts. Aborting configuration."
+  exit 1
+fi
+echo ">>> Kong Admin API is ready."
+# -----------------------------------------------------
+
 # --------------------------
 # Step 5: Configure Kong routes for Ollama
 # --------------------------
 echo ""
 echo ">>> Step 5: Configure Kong routes for Ollama"
 
+# 1. Tạo Service
 curl -s -X POST http://localhost:8001/services/ \
   -H "Content-Type: application/json" \
   -d '{
@@ -70,15 +86,15 @@ curl -s -X POST http://localhost:8001/services/ \
     "url": "http://ollama:11434"
   }'
 
+# 2. Tạo Route
 curl -s -X POST http://localhost:8001/services/ollama/routes \
   -H "Content-Type: application/json" \
   -d '{
     "paths": ["/ollama"],
-    "strip_path": false
+    "strip_path": true
   }'
 
-echo ">>> Kong routes for Ollama configured!"
-
+echo ">>> Kong routes for Ollama configured successfully!"
 # --------------------------
 # Step 6: Pull model if not exists
 # --------------------------
