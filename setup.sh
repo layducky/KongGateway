@@ -80,18 +80,12 @@ echo ">>> Step 5: Configure Kong routes for Ollama"
 # 1. Tạo Service
 curl -s -X POST http://localhost:8001/services/ \
   -H "Content-Type: application/json" \
-  -d '{
-    "name": "ollama",
-    "url": "http://ollama:11434"
-  }'
+  -d '{"name": "ollama", "url": "http://ollama-exporter:8000"}'
 
 # 2. Tạo Route
 curl -s -X POST http://localhost:8001/services/ollama/routes \
   -H "Content-Type: application/json" \
-  -d '{
-    "paths": ["/ollama"],
-    "strip_path": true
-  }'
+  -d '{"paths": ["/ollama"], "strip_path": true}'
 
 echo ">>> Kong routes for Ollama configured successfully!"
 # --------------------------
