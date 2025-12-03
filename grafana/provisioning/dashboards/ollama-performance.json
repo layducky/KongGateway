@@ -1,7 +1,7 @@
 {
   "id": null,
-  "uid": "ollama-perf-basic",
-  "title": "Ollama Model Performance (Basic)",
+  "uid": "ollama-perf-full",
+  "title": "Ollama Model Performance (Full)",
   "timezone": "browser",
   "schemaVersion": 36,
   "version": 1,
@@ -13,7 +13,8 @@
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "sum(ollama_request_count_total)"
+          "expr": "sum(ollama_requests_total)",
+          "legendFormat": "All Models"
         }
       ],
       "gridPos": { "x": 0, "y": 0, "w": 6, "h": 4 }
@@ -24,7 +25,8 @@
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "avg(ollama_tokens_per_second)"
+          "expr": "avg(ollama_tokens_per_second)",
+          "legendFormat": "All Models"
         }
       ],
       "gridPos": { "x": 6, "y": 0, "w": 6, "h": 4 }
@@ -35,7 +37,7 @@
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "sum by (model) (ollama_request_count_total)",
+          "expr": "sum by (model) (ollama_requests_total)",
           "legendFormat": "{{model}}"
         }
       ],
@@ -43,11 +45,11 @@
     },
     {
       "type": "graph",
-      "title": "Request Duration (seconds)",
+      "title": "Response Duration (seconds)",
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "avg by (model) (ollama_generation_seconds)",
+          "expr": "avg by (model) (ollama_response_seconds)",
           "legendFormat": "{{model}}"
         }
       ],
@@ -55,15 +57,63 @@
     },
     {
       "type": "graph",
-      "title": "Tokens Generated",
+      "title": "Model Load Duration (seconds)",
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "sum by (model) (ollama_tokens_total)",
+          "expr": "avg by (model) (ollama_load_duration_seconds)",
           "legendFormat": "{{model}}"
         }
       ],
       "gridPos": { "x": 0, "y": 16, "w": 12, "h": 6 }
+    },
+    {
+      "type": "graph",
+      "title": "Prompt Eval Duration (seconds)",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "avg by (model) (ollama_prompt_eval_duration_seconds)",
+          "legendFormat": "{{model}}"
+        }
+      ],
+      "gridPos": { "x": 0, "y": 22, "w": 12, "h": 6 }
+    },
+    {
+      "type": "graph",
+      "title": "Generation Duration (seconds)",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "avg by (model) (ollama_eval_duration_seconds)",
+          "legendFormat": "{{model}}"
+        }
+      ],
+      "gridPos": { "x": 0, "y": 28, "w": 12, "h": 6 }
+    },
+    {
+      "type": "graph",
+      "title": "Tokens Processed (prompt)",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "sum by (model) (ollama_tokens_processed_total)",
+          "legendFormat": "{{model}}"
+        }
+      ],
+      "gridPos": { "x": 0, "y": 34, "w": 12, "h": 6 }
+    },
+    {
+      "type": "graph",
+      "title": "Tokens Generated (response)",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "sum by (model) (ollama_tokens_generated_total)",
+          "legendFormat": "{{model}}"
+        }
+      ],
+      "gridPos": { "x": 0, "y": 40, "w": 12, "h": 6 }
     }
   ]
 }
