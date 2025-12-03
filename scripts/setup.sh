@@ -123,7 +123,12 @@ echo ""
 echo "=========================="
 echo " AI STACK READY (CPU MODE)"
 echo "=========================="
-echo "✔ Ollama API:    http://<server-ip>:11434"
-echo "✔ Kong Proxy:    http://<server-ip>:8000"
-echo "✔ Kong Admin:    http://<server-ip>:8001"
-echo "✔ Prometheus:    http://<server-ip>:9090"
+ip=$(curl -s ifconfig.me)
+if [ -z "$ip" ]; then
+  ip="localhost"
+fi
+
+echo "✔ Ollama API:    http://$ip:11434"
+echo "✔ Kong Proxy:    http://$ip:8000"
+echo "✔ Kong Admin:    http://$ip:8001"
+echo "✔ Prometheus:    http://$ip:9090"
