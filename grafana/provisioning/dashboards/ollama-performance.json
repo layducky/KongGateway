@@ -41,6 +41,12 @@
           "legendFormat": "{{model}}"
         }
       ],
+      "fieldConfig": {
+        "defaults": {
+          "drawStyle": "line"
+        },
+        "overrides": []
+      },
       "gridPos": { "x": 0, "y": 4, "w": 12, "h": 6 }
     },
     {
@@ -53,6 +59,12 @@
           "legendFormat": "{{model}}"
         }
       ],
+      "fieldConfig": {
+        "defaults": {
+          "drawStyle": "line"
+        },
+        "overrides": []
+      },
       "gridPos": { "x": 0, "y": 10, "w": 12, "h": 6 }
     },
     {
@@ -64,8 +76,13 @@
           "expr": "rate(ollama_load_duration_seconds_sum[5m]) / rate(ollama_load_duration_seconds_count[5m])",
           "legendFormat": "{{model}}"
         }
-
       ],
+      "fieldConfig": {
+        "defaults": {
+          "drawStyle": "line"
+        },
+        "overrides": []
+      },
       "gridPos": { "x": 0, "y": 16, "w": 12, "h": 6 }
     },
     {
@@ -77,8 +94,13 @@
           "expr": "rate(ollama_prompt_eval_duration_seconds_sum[5m]) / rate(ollama_prompt_eval_duration_seconds_count[5m])",
           "legendFormat": "{{model}}"
         }
-
       ],
+      "fieldConfig": {
+        "defaults": {
+          "drawStyle": "line"
+        },
+        "overrides": []
+      },
       "gridPos": { "x": 0, "y": 22, "w": 12, "h": 6 }
     },
     {
@@ -90,8 +112,13 @@
           "expr": "rate(ollama_eval_duration_seconds_sum[5m]) / rate(ollama_eval_duration_seconds_count[5m])",
           "legendFormat": "{{model}}"
         }
-
       ],
+      "fieldConfig": {
+        "defaults": {
+          "drawStyle": "line"
+        },
+        "overrides": []
+      },
       "gridPos": { "x": 0, "y": 28, "w": 12, "h": 6 }
     },
     {
@@ -104,6 +131,12 @@
           "legendFormat": "{{model}}"
         }
       ],
+      "fieldConfig": {
+        "defaults": {
+          "drawStyle": "line"
+        },
+        "overrides": []
+      },
       "gridPos": { "x": 0, "y": 34, "w": 12, "h": 6 }
     },
     {
@@ -116,6 +149,12 @@
           "legendFormat": "{{model}}"
         }
       ],
+      "fieldConfig": {
+        "defaults": {
+          "drawStyle": "line"
+        },
+        "overrides": []
+      },
       "gridPos": { "x": 0, "y": 40, "w": 12, "h": 6 }
     }
   ]
