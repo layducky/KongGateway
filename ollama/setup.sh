@@ -5,7 +5,6 @@ echo " AI STACK SETUP START "
 echo "=========================="
 
 cd "$(dirname "$0")"
-BASE_DIR="$(pwd)/.."
 
 # --------------------------
 # Step 1: Install Docker
@@ -29,7 +28,6 @@ fi
 # --------------------------
 echo ""
 echo ">>> Step 2: Start Docker Stack"
-cd "$BASE_DIR"
 docker compose pull
 docker compose up -d
 

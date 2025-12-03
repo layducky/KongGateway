@@ -5,7 +5,6 @@ echo " AI STACK SETUP START "
 echo "=========================="
 
 cd "$(dirname "$0")"
-BASE_DIR="$(pwd)/.."
 
 
 # --------------------------------------------------
@@ -47,8 +46,8 @@ fi
 # --------------------------
 echo ""
 echo ">>> Step 2: Load env"
-if [ -f "$BASE_DIR/.env" ]; then
-    export $(grep -v '^#' "$BASE_DIR/.env" | xargs)
+if [ -f "/.env" ]; then
+    export $(grep -v '^#' "/.env" | xargs)
 fi
 
 # --------------------------
@@ -56,7 +55,6 @@ fi
 # --------------------------
 echo ""
 echo ">>> Step 3: Start Docker Stack"
-cd "$BASE_DIR"
 docker compose pull
 docker compose up -d
 
@@ -113,26 +111,6 @@ curl -s -X POST http://localhost:8001/services/ollama/routes \
   }'
 
 echo ">>> Kong routes for Ollama configured successfully!"
-# --------------------------
-# Step 6: Pull model if not exists
-# --------------------------
-echo ""
-echo ">>> Step 6: Ensure model qwen2.5-coder:1.5b is available"
-
-OLLAMA_CONTAINER=$(docker ps --filter "ancestor=ollama/ollama:latest" --format "{{.ID}}")
-
-if [ -z "$OLLAMA_CONTAINER" ]; then
-    echo ">>> Ollama container not found!"
-else
-    docker exec -it $OLLAMA_CONTAINER ollama list | grep -q "qwen2.5-coder:1.5b"
-    if [ $? -ne 0 ]; then
-        echo ">>> Pulling model qwen2.5-coder:1.5b..."
-        docker exec -it $OLLAMA_CONTAINER ollama pull qwen2.5-coder:1.5b
-        echo ">>> Model pulled!"
-    else
-        echo ">>> Model qwen2.5-coder:1.5b already available"
-    fi
-fi
 
 # --------------------------
 # Done
