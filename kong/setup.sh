@@ -7,6 +7,24 @@ echo "=========================="
 cd "$(dirname "$0")"
 BASE_DIR="$(pwd)/.."
 
+
+# --------------------------------------------------
+# Step 0: Ask user for AI server private IP
+# --------------------------------------------------
+echo ""
+echo ">>> Enter AI Server IP (Ollama private IP): "
+read -p "AI_IP = " AI_IP
+
+# Validate IPv4
+if [[ ! $AI_IP =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    echo "!!! Error: Invalid IP format."
+    exit 1
+fi
+
+export AI_IP
+echo ">>> Using AI Server IP: $AI_IP"
+echo ""
+
 # --------------------------
 # Step 1: Install Docker
 # --------------------------
@@ -81,10 +99,10 @@ echo ">>> Step 5: Configure Kong routes for Ollama"
 # 1. Tạo Service
 curl -s -X POST http://localhost:8001/services/ \
   -H "Content-Type: application/json" \
-  -d '{
-    "name": "ollama",
-    "url": "http://ollama:11434"
-  }'
+  -d "{
+    \"name\": \"ollama\",
+    \"url\": \"http://$AI_IP:11434\"
+  }"
 
 # 2. Tạo Route
 curl -s -X POST http://localhost:8001/services/ollama/routes \
@@ -121,14 +139,10 @@ fi
 # --------------------------
 echo ""
 echo "=========================="
-echo " AI STACK READY (CPU MODE)"
+echo " AI STACK READY "
 echo "=========================="
-ip=$(curl -s ifconfig.me)
-if [ -z "$ip" ]; then
-  ip="localhost"
-fi
+ip=$(curl -s ifconfig.me || echo "localhost")
 
-echo "✔ Ollama API:    http://$ip:11434"
 echo "✔ Kong Proxy:    http://$ip:8000"
 echo "✔ Kong Admin:    http://$ip:8001"
 echo "✔ Prometheus:    http://$ip:9090"
