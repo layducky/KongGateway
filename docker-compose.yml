@@ -56,7 +56,7 @@ services:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     depends_on:
       - ollama
-      - kong # Đảm bảo có thể scrape Kong metrics
+      - kong
 
   # =====================================
   # 5. GRAFANA
@@ -65,14 +65,25 @@ services:
     image: grafana/grafana:latest
     container_name: grafana
     ports:
-      - "3000:3000" # Mở cổng 3000 cho truy cập UI
+      - "3000:3000"
     volumes:
       - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
     depends_on:
-      - prometheus # Đảm bảo Prometheus chạy trước khi Grafana cố gắng lấy dữ liệu
+      - prometheus 
     restart: unless-stopped
+    
+  ollama-exporter:
+    image: ghcr.io/boi123212321/ollama-prometheus-exporter:latest
+    environment:
+      OLLAMA_URL: http://ollama:11434
+    ports:
+      - "9178:9178"
+    depends_on:
+      - ollama
+
 
 volumes:
   kong_db:
   ollama_data:
-  grafana_data: # Thêm volume cho Grafana để lưu trữ cấu hình/dashboards
+  grafana_data:

@@ -1,0 +1,69 @@
+{
+  "id": null,
+  "uid": "ollama-perf-basic",
+  "title": "Ollama Model Performance (Basic)",
+  "timezone": "browser",
+  "schemaVersion": 36,
+  "version": 1,
+  "refresh": "5s",
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Total Requests",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "sum(ollama_request_count_total)"
+        }
+      ],
+      "gridPos": { "x": 0, "y": 0, "w": 6, "h": 4 }
+    },
+    {
+      "type": "stat",
+      "title": "Tokens Per Second",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "avg(ollama_tokens_per_second)"
+        }
+      ],
+      "gridPos": { "x": 6, "y": 0, "w": 6, "h": 4 }
+    },
+    {
+      "type": "graph",
+      "title": "Requests by Model",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "sum by (model) (ollama_request_count_total)",
+          "legendFormat": "{{model}}"
+        }
+      ],
+      "gridPos": { "x": 0, "y": 4, "w": 12, "h": 6 }
+    },
+    {
+      "type": "graph",
+      "title": "Request Duration (seconds)",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "avg by (model) (ollama_generation_seconds)",
+          "legendFormat": "{{model}}"
+        }
+      ],
+      "gridPos": { "x": 0, "y": 10, "w": 12, "h": 6 }
+    },
+    {
+      "type": "graph",
+      "title": "Tokens Generated",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "sum by (model) (ollama_tokens_total)",
+          "legendFormat": "{{model}}"
+        }
+      ],
+      "gridPos": { "x": 0, "y": 16, "w": 12, "h": 6 }
+    }
+  ]
+}
