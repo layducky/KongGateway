@@ -72,9 +72,9 @@ services:
     depends_on:
       - prometheus 
     restart: unless-stopped
-    
+
   ollama-exporter:
-    image: ghcr.io/boi123212321/ollama-prometheus-exporter:latest
+    image: lucabecker42/ollama-exporter:1.0.1
     environment:
       OLLAMA_URL: http://ollama:11434
     ports:
