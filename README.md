@@ -1,6 +1,6 @@
 # AI Stack với Ollama, Kong, Prometheus & Grafana
 
-## 🚀 Cách chạy
+## Cách chạy
 
 ### 1. Chạy setup
 
@@ -13,7 +13,7 @@ chmod +x ./setup.sh
 Sau khi setup xong, mở trình duyệt:
 
 ```
-http://localhost:3000
+http://<URL>:3000
 ```
 
 **Login mặc định:**
@@ -46,7 +46,7 @@ curl http://localhost:8000/ollama/api/chat -d '{
 }'
 ```
 
-## 🛑 Dừng services
+## Dừng services
 
 ```bash
 docker compose down
