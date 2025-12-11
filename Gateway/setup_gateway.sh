@@ -62,19 +62,22 @@ docker compose stop kong
 docker compose run --rm kong kong migrations bootstrap
 docker compose up -d kong
 
-# Wait for Kong
-MAX_RETRIES=15
+# Wait for Kong with better feedback
+MAX_RETRIES=30
 RETRY_COUNT=0
 echo ">>> Waiting for Kong Admin API..."
-until curl -s http://localhost:8001/status | grep -q "200" || [ $RETRY_COUNT -eq $MAX_RETRIES ]; do
+until curl -s -o /dev/null -w "%{http_code}" http://localhost:8001/status 2>/dev/null | grep 200 > /dev/null; do
+    if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
+        echo "!!! Error: Kong failed to start after 90s"
+        echo ">>> Check logs: docker compose logs kong"
+        exit 1
+    fi
     sleep 3
     RETRY_COUNT=$((RETRY_COUNT + 1))
+    echo "    Attempt $RETRY_COUNT/$MAX_RETRIES..."
 done
 
-if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
-    echo "!!! Error: Kong failed to start"
-    exit 1
-fi
+echo ">>> Kong is ready!"
 
 # --------------------------
 # Configure Kong routes
