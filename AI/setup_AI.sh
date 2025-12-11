@@ -54,7 +54,7 @@ if [ -z "$OLLAMA_CONTAINER" ]; then
 fi
 
 # Check if model exists
-docker exec $OLLAMA_CONTAINER ollama list | grep -q "qwen2.5-coder:1.5b"
+docker exec -i "$OLLAMA_CONTAINER" ollama list | grep -q "qwen2.5-coder:1.5b"
 
 if [ $? -ne 0 ]; then
     echo ">>> Pulling model qwen2.5-coder:1.5b..."
