@@ -46,7 +46,7 @@ sleep 10
 echo ""
 echo ">>> Step 3: Pull AI model qwen2.5-coder:1.5b"
 
-OLLAMA_CONTAINER=$(docker ps --filter "name=ollama" --format "{{.ID}}")
+OLLAMA_CONTAINER=$(docker ps --filter "ancestor=ollama/ollama:latest" --format "{{.ID}}")
 
 if [ -z "$OLLAMA_CONTAINER" ]; then
     echo "!!! Error: Ollama container not found!"
