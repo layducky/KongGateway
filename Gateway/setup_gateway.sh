@@ -84,10 +84,22 @@ echo ">>> Kong is ready!"
 # --------------------------
 echo ""
 echo ">>> Configuring Kong routes..."
+AI_SERVER_URL="http://$AI_SERVER_IP:9178"
+SERVICE_NAME="ollama"
 
-curl -s -X POST http://localhost:8001/services/ \
-  -H "Content-Type: application/json" \
-  -d "{\"name\": \"ollama\", \"url\": \"http://$AI_SERVER_IP:9178\"}" > /dev/null
+SERVICE_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8001/services/$SERVICE_NAME)
+
+if [ "$SERVICE_STATUS" -eq 200 ]; then
+    echo "    Service '$SERVICE_NAME' existed. Updating URL (PATCH) to $AI_SERVER_URL..."
+    curl -s -X PATCH http://localhost:8001/services/ollama \
+      -H "Content-Type: application/json" \
+      -d "{\"url\": \"$AI_SERVER_URL\"}" > /dev/null
+else
+    echo "    Service '$SERVICE_NAME' did not exist. Creating new (POST) with URL $AI_SERVER_URL..."
+    curl -s -X POST http://localhost:8001/services/ \
+      -H "Content-Type: application/json" \
+      -d "{\"name\": \"ollama\", \"url\": \"$AI_SERVER_URL\"}" > /dev/null
+fi
 
 curl -s -X POST http://localhost:8001/services/ollama/routes \
   -H "Content-Type: application/json" \
