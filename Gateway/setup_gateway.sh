@@ -87,7 +87,7 @@ echo ">>> Configuring Kong routes..."
 
 curl -s -X POST http://localhost:8001/services/ \
   -H "Content-Type: application/json" \
-  -d "{\"name\": \"ollama\", \"url\": \"http://$AI_SERVER_IP:11434\"}" > /dev/null
+  -d "{\"name\": \"ollama\", \"url\": \"http://$AI_SERVER_IP:9178\"}" > /dev/null
 
 curl -s -X POST http://localhost:8001/services/ollama/routes \
   -H "Content-Type: application/json" \
