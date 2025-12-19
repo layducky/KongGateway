@@ -24,7 +24,7 @@ http://<URL>:3000
 ### 1. Gọi qua Kong Gateway
 
 ```bash
-curl http://localhost:8000/ollama/api/generate -d '{
+curl http://<URL>:8000/ollama/api/generate -d '{
   "model": "qwen2.5-coder:1.5b",
   "prompt": "Explain Docker in one sentence",
   "stream": false
@@ -34,7 +34,7 @@ curl http://localhost:8000/ollama/api/generate -d '{
 ### 2. Chat completion
 
 ```bash
-curl http://localhost:8000/ollama/api/chat -d '{
+curl http://<URL>:8000/ollama/api/chat -d '{
   "model": "qwen2.5-coder:1.5b",
   "messages": [
     {
