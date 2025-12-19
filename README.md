@@ -24,26 +24,13 @@ http://<URL>:3000
 ### 1. Gọi qua Kong Gateway
 
 ```bash
-curl http://<URL>:8000/ollama/api/generate -d '{
-  "model": "qwen2.5-coder:1.5b",
-  "prompt": "Explain Docker in one sentence",
-  "stream": false
-}'
+curl http://<URL>:8000/ollama/api/generate -d '{"model": "qwen2.5-coder:1.5b", "prompt": "Explain Docker in one sentence", "stream": false}'
 ```
 
 ### 2. Chat completion
 
 ```bash
-curl http://<URL>:8000/ollama/api/chat -d '{
-  "model": "qwen2.5-coder:1.5b",
-  "messages": [
-    {
-      "role": "user",
-      "content": "Write a Python function to calculate fibonacci"
-    }
-  ],
-  "stream": false
-}'
+curl http://<URL>:8000/ollama/api/chat -d '{"model": "qwen2.5-coder:1.5b", "messages": [{"role": "user", "content": "Write a Python function to calculate fibonacci"}], "stream": false}'
 ```
 
 ## Dừng services

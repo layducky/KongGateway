@@ -7,12 +7,11 @@ echo "================================"
 cd "$(dirname "$0")"
 
 # --------------------------
-# Get AI Server IP
+# Get AI Server IP from env
 # --------------------------
-read -p "AI_SERVER_IP (e.g., 192.168.1.100): " AI_SERVER_IP
 
 if [ -z "$AI_SERVER_IP" ]; then
-    echo "!!! Error: AI Server IP is required!"
+    echo "!!! Error: AI_SERVER_IP environment variable is required!"
     exit 1
 fi
 
@@ -30,7 +29,7 @@ if ! command -v docker >/dev/null 2>&1; then
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
     sudo apt update
     sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
-    sudo usermod -aG docker $USER
+    sudo usermod -aG docker ubuntu
     echo ">>> Docker installed. Logout & login recommended."
 else
     echo ">>> Docker already installed"
@@ -49,8 +48,8 @@ echo ">>> Prometheus configured: $AI_SERVER_IP:9178"
 # --------------------------
 echo ""
 echo ">>> Starting containers..."
-docker compose pull
-docker compose up -d
+sudo docker compose pull
+sudo docker compose up -d
 sleep 6
 
 # --------------------------

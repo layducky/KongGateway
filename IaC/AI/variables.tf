@@ -2,8 +2,10 @@ variable "aws_region" {
   default = "ap-southeast-1"
 }
 
-variable "public_key_path" {
-  default = "~/.ssh/id_rsa.pub"
+variable "key_name" {
+  description = "Existing EC2 key pair name"
+  type        = string
+  default     = "Hp_Envy-keypair"
 }
 
 variable "private_key_path" {
