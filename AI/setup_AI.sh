@@ -23,7 +23,7 @@ if ! command -v docker >/dev/null 2>&1; then
 
     sudo apt update
     sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
-    sudo usermod -aG docker $USER
+    sudo usermod -aG docker ubuntu
 
     echo ">>> Docker installed"
 else
@@ -35,8 +35,8 @@ fi
 # --------------------------
 echo ""
 echo ">>> Starting AI containers"
-docker compose pull
-docker compose up -d
+sudo docker compose pull
+sudo docker compose up -d
 
 echo ">>> Waiting for Ollama..."
 sleep 10
