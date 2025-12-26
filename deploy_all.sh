@@ -38,6 +38,7 @@ terraform init -input=false
 terraform apply -auto-approve \
   -var="ai_server_ip=$AI_SERVER_IP"
 
+echo "AI_ServerIP: $AI_SERVER_IP"
 echo ""
 echo "================================"
 echo " DEPLOY ALL DONE"

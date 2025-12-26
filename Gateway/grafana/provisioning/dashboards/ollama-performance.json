@@ -1,10 +1,10 @@
 {
   "id": null,
-  "uid": "ollama-perf-full",
-  "title": "Ollama Model Performance (Full)",
+  "uid": "ollama-perf-enhanced",
+  "title": "Ollama Model Performance Dashboard",
   "timezone": "browser",
   "schemaVersion": 36,
-  "version": 1,
+  "version": 5,
   "refresh": "5s",
   "panels": [
     {
@@ -14,148 +14,582 @@
       "targets": [
         {
           "expr": "sum(ollama_requests_total)",
-          "legendFormat": "All Models"
+          "refId": "A",
+          "legendFormat": ""
         }
       ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value",
+        "orientation": "auto",
+        "reduceOptions": {
+          "values": false,
+          "calcs": ["lastNotNull"]
+        },
+        "textAlignment": "center"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "value": null, "color": "blue" }
+            ]
+          },
+          "mappings": []
+        }
+      },
       "gridPos": { "x": 0, "y": 0, "w": 6, "h": 4 }
     },
     {
       "type": "stat",
-      "title": "Tokens Per Second",
+      "title": "Active Models",
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "rate(ollama_tokens_per_second_sum[5m]) / rate(ollama_tokens_per_second_count[5m])",
-          "legendFormat": "{{model}}"
+          "expr": "count(count by (model) (ollama_requests_total))",
+          "refId": "A",
+          "legendFormat": ""
         }
       ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value",
+        "orientation": "auto",
+        "reduceOptions": {
+          "values": false,
+          "calcs": ["lastNotNull"]
+        },
+        "textAlignment": "center"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "value": null, "color": "green" }
+            ]
+          }
+        }
+      },
       "gridPos": { "x": 6, "y": 0, "w": 6, "h": 4 }
     },
     {
-      "type": "graph",
-      "title": "Requests by Model",
+      "type": "timeseries",
+      "title": "Tokens Per Second by Model",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "rate(ollama_tokens_per_second_sum{model=~\".+\"}[5m]) / rate(ollama_tokens_per_second_count{model=~\".+\"}[5m])",
+          "refId": "A",
+          "legendFormat": "{{model}}"
+        }
+      ],
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": ["last", "mean", "max"]
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "fillOpacity": 30,
+            "showPoints": "auto",
+            "lineWidth": 2,
+            "gradientMode": "opacity"
+          },
+          "unit": "short",
+          "decimals": 2,
+          "color": {
+            "mode": "palette-classic"
+          }
+        }
+      },
+      "gridPos": { "x": 0, "y": 4, "w": 12, "h": 8 }
+    },
+    {
+      "type": "piechart",
+      "title": "Request Distribution by Model",
       "datasource": "Prometheus",
       "targets": [
         {
           "expr": "sum by (model) (ollama_requests_total)",
-          "legendFormat": "{{model}}"
+          "refId": "A",
+          "legendFormat": "{{model}}",
+          "instant": true
         }
       ],
-      "fieldConfig": {
-        "defaults": {
-          "drawStyle": "line"
+      "options": {
+        "pieType": "donut",
+        "displayLabels": ["name", "percent"],
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "values": ["value", "percent"],
+          "calcs": ["lastNotNull"]
         },
-        "overrides": []
+        "tooltip": {
+          "mode": "single"
+        },
+        "reduceOptions": {
+          "values": false,
+          "calcs": ["lastNotNull"]
+        }
       },
-      "gridPos": { "x": 0, "y": 4, "w": 12, "h": 6 }
+      "gridPos": { "x": 12, "y": 4, "w": 12, "h": 8 }
     },
     {
-      "type": "graph",
-      "title": "Response Duration (seconds)",
+      "type": "timeseries",
+      "title": "Request Rate by Model",
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "rate(ollama_response_seconds_sum[5m]) / rate(ollama_response_seconds_count[5m])",
+          "expr": "sum by (model) (rate(ollama_requests_total{model=~\".+\"}[5m]))",
+          "refId": "A",
           "legendFormat": "{{model}}"
         }
       ],
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": ["last", "mean", "max"]
+        }
+      },
       "fieldConfig": {
         "defaults": {
-          "drawStyle": "line"
-        },
-        "overrides": []
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "fillOpacity": 20,
+            "showPoints": "auto",
+            "lineWidth": 2
+          },
+          "unit": "reqps",
+          "decimals": 4,
+          "color": {
+            "mode": "palette-classic"
+          }
+        }
       },
-      "gridPos": { "x": 0, "y": 10, "w": 12, "h": 6 }
+      "gridPos": { "x": 0, "y": 12, "w": 12, "h": 8 }
     },
     {
-      "type": "graph",
-      "title": "Model Load Duration (seconds)",
+      "type": "timeseries",
+      "title": "Response Duration by Model",
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "rate(ollama_load_duration_seconds_sum[5m]) / rate(ollama_load_duration_seconds_count[5m])",
+          "expr": "rate(ollama_response_seconds_sum{model=~\".+\"}[5m]) / rate(ollama_response_seconds_count{model=~\".+\"}[5m])",
+          "refId": "A",
           "legendFormat": "{{model}}"
         }
       ],
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": ["last", "mean", "max"]
+        }
+      },
       "fieldConfig": {
         "defaults": {
-          "drawStyle": "line"
-        },
-        "overrides": []
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "fillOpacity": 20,
+            "showPoints": "auto",
+            "lineWidth": 2
+          },
+          "unit": "s",
+          "decimals": 2,
+          "color": {
+            "mode": "palette-classic"
+          }
+        }
       },
-      "gridPos": { "x": 0, "y": 16, "w": 12, "h": 6 }
+      "gridPos": { "x": 12, "y": 12, "w": 12, "h": 8 }
     },
     {
-      "type": "graph",
-      "title": "Prompt Eval Duration (seconds)",
+      "type": "timeseries",
+      "title": "Model Load Duration by Model",
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "rate(ollama_prompt_eval_duration_seconds_sum[5m]) / rate(ollama_prompt_eval_duration_seconds_count[5m])",
+          "expr": "rate(ollama_load_duration_seconds_sum{model=~\".+\"}[5m]) / rate(ollama_load_duration_seconds_count{model=~\".+\"}[5m])",
+          "refId": "A",
           "legendFormat": "{{model}}"
         }
       ],
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": ["last", "mean", "max"]
+        }
+      },
       "fieldConfig": {
         "defaults": {
-          "drawStyle": "line"
-        },
-        "overrides": []
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "fillOpacity": 25,
+            "showPoints": "auto",
+            "lineWidth": 2
+          },
+          "unit": "s",
+          "decimals": 3,
+          "color": {
+            "mode": "palette-classic"
+          }
+        }
       },
-      "gridPos": { "x": 0, "y": 22, "w": 12, "h": 6 }
+      "gridPos": { "x": 0, "y": 20, "w": 12, "h": 8 }
     },
     {
-      "type": "graph",
-      "title": "Generation Duration (seconds)",
+      "type": "timeseries",
+      "title": "Prompt Eval Duration by Model",
       "datasource": "Prometheus",
       "targets": [
         {
-          "expr": "rate(ollama_eval_duration_seconds_sum[5m]) / rate(ollama_eval_duration_seconds_count[5m])",
+          "expr": "rate(ollama_prompt_eval_duration_seconds_sum{model=~\".+\"}[5m]) / rate(ollama_prompt_eval_duration_seconds_count{model=~\".+\"}[5m])",
+          "refId": "A",
           "legendFormat": "{{model}}"
         }
       ],
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": ["last", "mean", "max"]
+        }
+      },
       "fieldConfig": {
         "defaults": {
-          "drawStyle": "line"
-        },
-        "overrides": []
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "fillOpacity": 25,
+            "showPoints": "auto",
+            "lineWidth": 2
+          },
+          "unit": "s",
+          "decimals": 3,
+          "color": {
+            "mode": "palette-classic"
+          }
+        }
       },
-      "gridPos": { "x": 0, "y": 28, "w": 12, "h": 6 }
+      "gridPos": { "x": 12, "y": 20, "w": 12, "h": 8 }
     },
     {
-      "type": "graph",
-      "title": "Tokens Processed (prompt)",
+      "type": "timeseries",
+      "title": "Generation Duration by Model",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "rate(ollama_eval_duration_seconds_sum{model=~\".+\"}[5m]) / rate(ollama_eval_duration_seconds_count{model=~\".+\"}[5m])",
+          "refId": "A",
+          "legendFormat": "{{model}}"
+        }
+      ],
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": ["last", "mean", "max"]
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "fillOpacity": 25,
+            "showPoints": "auto",
+            "lineWidth": 2
+          },
+          "unit": "s",
+          "decimals": 3,
+          "color": {
+            "mode": "palette-classic"
+          }
+        }
+      },
+      "gridPos": { "x": 0, "y": 28, "w": 12, "h": 8 }
+    },
+    {
+      "type": "timeseries",
+      "title": "Tokens Processed (Input) by Model",
       "datasource": "Prometheus",
       "targets": [
         {
           "expr": "sum by (model) (ollama_tokens_processed_total)",
+          "refId": "A",
           "legendFormat": "{{model}}"
         }
       ],
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": ["last", "mean", "max"]
+        }
+      },
       "fieldConfig": {
         "defaults": {
-          "drawStyle": "line"
-        },
-        "overrides": []
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "fillOpacity": 30,
+            "showPoints": "auto",
+            "lineWidth": 2
+          },
+          "unit": "short",
+          "decimals": 0,
+          "color": {
+            "mode": "palette-classic"
+          }
+        }
       },
-      "gridPos": { "x": 0, "y": 34, "w": 12, "h": 6 }
+      "gridPos": { "x": 12, "y": 28, "w": 12, "h": 8 }
     },
     {
-      "type": "graph",
-      "title": "Tokens Generated (response)",
+      "type": "timeseries",
+      "title": "Tokens Generated (Output) by Model",
       "datasource": "Prometheus",
       "targets": [
         {
           "expr": "sum by (model) (ollama_tokens_generated_total)",
+          "refId": "A",
           "legendFormat": "{{model}}"
         }
       ],
+      "options": {
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": ["last", "mean", "max"]
+        }
+      },
       "fieldConfig": {
         "defaults": {
-          "drawStyle": "line"
-        },
-        "overrides": []
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "fillOpacity": 30,
+            "showPoints": "auto",
+            "lineWidth": 2
+          },
+          "unit": "short",
+          "decimals": 0,
+          "color": {
+            "mode": "palette-classic"
+          }
+        }
       },
-      "gridPos": { "x": 0, "y": 40, "w": 12, "h": 6 }
+      "gridPos": { "x": 0, "y": 36, "w": 12, "h": 8 }
+    },
+    {
+      "type": "table",
+      "title": "Model Performance Summary",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "sum by (model) (ollama_requests_total)",
+          "refId": "A",
+          "format": "table",
+          "instant": true
+        },
+        {
+          "expr": "rate(ollama_tokens_per_second_sum{model=~\".+\"}[5m]) / rate(ollama_tokens_per_second_count{model=~\".+\"}[5m])",
+          "refId": "B",
+          "format": "table",
+          "instant": true
+        },
+        {
+          "expr": "rate(ollama_response_seconds_sum{model=~\".+\"}[5m]) / rate(ollama_response_seconds_count{model=~\".+\"}[5m])",
+          "refId": "C",
+          "format": "table",
+          "instant": true
+        }
+      ],
+      "transformations": [
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "instance": true,
+              "job": true
+            },
+            "renameByName": {
+              "model": "Model",
+              "Value #A": "Total Requests",
+              "Value #B": "Tokens/Sec",
+              "Value #C": "Avg Response (s)"
+            }
+          }
+        }
+      ],
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "Total Requests",
+            "desc": true
+          }
+        ],
+        "footer": {
+          "show": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "center",
+            "displayMode": "auto",
+            "filterable": false
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Tokens/Sec"
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "gradient-gauge"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "min",
+                "value": 0
+              },
+              {
+                "id": "max",
+                "value": 100
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Avg Response (s)"
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    { "value": null, "color": "green" },
+                    { "value": 5, "color": "yellow" },
+                    { "value": 10, "color": "red" }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total Requests"
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "auto"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": { "x": 0, "y": 44, "w": 24, "h": 6 }
     }
-  ]
+  ],
+  "templating": {
+    "list": []
+  },
+  "annotations": {
+    "list": []
+  },
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": ["5s", "10s", "30s", "1m", "5m"]
+  }
 }

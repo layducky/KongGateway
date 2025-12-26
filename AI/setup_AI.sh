@@ -44,7 +44,12 @@ sleep 10
 # --------------------------
 # Pull AI model (if missing)
 # --------------------------
-MODEL="qwen2.5-coder:1.5b"
+MODELS=(
+  "qwen2.5-coder:1.5b"
+  "smollm2:1.7b"
+  "llama3.2:3b"
+)
+
 OLLAMA_CONTAINER=$(docker ps --filter "ancestor=ollama/ollama:latest" --format "{{.ID}}")
 
 if [ -z "$OLLAMA_CONTAINER" ]; then
@@ -52,12 +57,14 @@ if [ -z "$OLLAMA_CONTAINER" ]; then
     exit 1
 fi
 
-if ! docker exec "$OLLAMA_CONTAINER" ollama list | grep -q "$MODEL"; then
-    echo ">>> Pulling model $MODEL"
-    docker exec "$OLLAMA_CONTAINER" ollama pull "$MODEL"
-else
-    echo ">>> Model $MODEL already exists"
-fi
+for MODEL in "${MODELS[@]}"; do
+    if ! docker exec "$OLLAMA_CONTAINER" ollama list | grep -q "$MODEL"; then
+        echo ">>> Pulling model $MODEL"
+        docker exec "$OLLAMA_CONTAINER" ollama pull "$MODEL"
+    else
+        echo ">>> Model $MODEL already exists"
+    fi
+done
 
 # --------------------------
 # Done

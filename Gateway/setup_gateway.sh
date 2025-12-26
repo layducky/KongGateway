@@ -9,10 +9,12 @@ cd "$(dirname "$0")"
 # --------------------------
 # Get AI Server IP from env
 # --------------------------
-
 if [ -z "$AI_SERVER_IP" ]; then
-    echo "!!! Error: AI_SERVER_IP environment variable is required!"
-    exit 1
+    read -p "Enter AI_SERVER_IP (e.g., 18.142.254.163): " AI_SERVER_IP
+    if [ -z "$AI_SERVER_IP" ]; then
+        echo "!!! Error: AI_SERVER_IP is required!"
+        exit 1
+    fi
 fi
 
 echo ">>> Using AI Server: $AI_SERVER_IP"
@@ -120,7 +122,7 @@ echo "✔ Kong Admin:  http://$GATEWAY_IP:8001"
 echo "✔ Prometheus:  http://$GATEWAY_IP:9090"
 echo "✔ Grafana:     http://$GATEWAY_IP:3000"
 echo ""
-echo "🔗 AI Server:   http://$AI_SERVER_IP:11434"
+echo "AI Server:   http://$AI_SERVER_IP:9178"
 echo ""
 echo "Test: curl http://$GATEWAY_IP:8000/ollama/api/version"
 echo ""
